@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>jQuery+css3响应式时间轴页面效果</title>
+
+<link th:href="@{/css/timeline.css}" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" th:src="@{/js/modernizr.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery-1.8.3.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.leaf.js}"></script>
+
+</head>
+<body>
+	<header>
+		<h1>天天资讯</h1>
+	</header>
+
+	<section id="cd-timeline" class="cd-container">
+
+	</section> <!-- cd-timeline -->
+	<header>
+		<h5>develop by tao</h5>
+	</header>
+<script>
+	/*<![CDATA[*/
+var index = 0;
+var count = infoCount();
+var step = 5;
+$(function(){
+
+	var infos = loadArticle( 0*step, step);
+	if(infos == null && infos == '{}') return;
+	$.each(infos,function (i,info) {
+		$("#cd-timeline").leaf(info);
+	})
+	index++;
+
+	$(window).on('scroll', function(event){
+		setTimeout(5000);
+		$('.cd-timeline-block').each(function(){
+			if( $(this).offset().top <= $(window).scrollTop()+$(window).height()*0.75 && $(this).find('.cd-timeline-img').hasClass('is-hidden') ) {
+				$(this).find('.cd-timeline-img, .cd-timeline-content').removeClass('is-hidden').addClass('bounce-in');
+
+				if(index > count /step) return;
+
+				var content = loadArticle( index*step, step);
+				if(content != null && content != '{}') {
+					$.each(content,function (i,con) {
+						$("#cd-timeline").leaf(con);
+					})
+					index++;
+				}
+			}
+		});
+
+	});
+});
+
+
+
+function loadArticle(index,step) {
+	var info;
+
+	$.ajax({
+		url: "/info/query",
+		type:"GET",
+		data:{index:index, step:step},
+		async:false,
+		dataType:"json",
+		success: function(e1,e2){
+			info = e1
+		},
+		error:function () {
+			info = null;
+		}
+	});
+
+	return info;
+}
+
+function infoCount() {
+	var count;
+
+	$.ajax({
+		url: "/info/count",
+		type:"GET",
+		async:false,
+		dataType:"json",
+		success: function(e1,e2){
+			count = e1
+		},
+		error:function () {
+			count = null;
+		}
+	});
+
+	return count;
+}
+	/*]]>*/
+</script>
+
+</body>
+</html>

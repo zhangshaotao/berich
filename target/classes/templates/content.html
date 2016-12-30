@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+
+    <link th:href="@{/css/timeline.css}" rel="stylesheet" type="text/css" />
+    <link th:href="@{/css/berich.css}" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" th:src="@{/js/jquery-1.8.3.min.js}"></script>
+</head>
+<body>
+    <header>
+        <h1>天天资讯</h1>
+    </header>
+
+    <section class="cd-container">
+
+        <div class="main">
+            <div class="title"></div>
+            <div class="source"></div>
+            <div class="info">
+                <h5>摘要:</h5><br/>
+                <span></span>
+            </div>
+            <div class="content"></div>
+        </div>
+
+    </section>
+
+    <header>
+        <h5>develop by tao</h5>
+    </header>
+</body>
+
+<script type="text/javascript">
+/*<![CDATA[*/
+
+$(function () {
+    var detail = findInfoDetail(20);
+    $(".content").html(detail.content);
+    $(".title").html(detail.title);
+    $(".info").find("span").html(detail.keywords);
+    $(".source").html(detail.author+"     "+detail.create_datetime);
+});
+
+
+function findInfoDetail(id) {
+    var detail;
+
+    $.ajax({
+        url: "/info/detail",
+        type:"GET",
+        data:{id:id},
+        async:false,
+        dataType:"json",
+        success: function(e1,e2){
+            detail = e1
+        },
+        error:function () {
+            detail = null;
+        }
+    });
+
+    return detail;
+}
+
+/*]]>*/
+</script>
+</html>
